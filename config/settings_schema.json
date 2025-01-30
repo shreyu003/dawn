@@ -1414,6 +1414,21 @@
     ]
   },
   {
+    "name": "Shipping Calculation",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Shipping"
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_amount_value",
+        "label": "Shiiping Charges",
+        "default": "50"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.cart.name",
     "settings": [
       {

@@ -40,9 +40,21 @@
       "reset": "Clear search term"
     },
     "cart": {
-      "view": "View cart ({{ count }})",
-      "view_empty_cart": "View cart",
-      "item_added": "Item added to your cart"
+      "title": "Cart",
+      "cart_product_title": "Product",
+      "cart_price_title": "Price",
+      "cart_quantity_title": "Quantity",
+      "cart_empty_massage": "Your Cart Is Empty",
+      "checkout_button": "Checkout",
+      "checkout_detail_title": "Order Summary",
+      "cart_subtotal": "Subtotal",
+      "cart_shipping_free": "Shipping Free",
+      "cart_total": "Total",
+      "free_shipping": "Free",
+      "coupon_code_btn": "Apply"
+    },
+    "price": {
+      "price_icon": "₹"
     },
     "share": {
       "close": "Close share",

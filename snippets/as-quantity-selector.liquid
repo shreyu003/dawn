@@ -1,0 +1,9 @@
+<div class="as-qty-box">
+    <button class="qty-btn btn1"> {% render 'as-quantity-minus' %} </button>
+    {% assign total_quantity = 0 %}
+    {% for item in cart.items %}
+        {% assign total_quantity = total_quantity | plus: item.quantity %}
+    {% endfor %}
+    <input type="number" name="quantity" class="as-quantity-input btn1" value="{{ total_quantity }}">
+    <button class="qty-btn btn1"> {% render 'as-quantity-plus' %} </button>
+</div>

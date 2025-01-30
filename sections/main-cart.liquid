@@ -1,0 +1,119 @@
+<style>
+    .main-cart-box{
+        position: relative;
+    }
+</style>
+
+<section class="main-cart-box">
+    <div class="container">
+        <form action="{{ routes.cart_url }}" method="post">
+            <div class="as-title-box">
+                <h2 class="as-title"> {{ 'general.cart.title' | t }} </h2>
+            </div>
+            <div class="as-cart-item-main">
+                <div>
+                    <div>
+                        <ul class="as-cart-line-title">
+                            <li>
+                                <p> {{ 'general.cart.cart_product_title' | t }} </p>
+                            </li>
+                            <li>
+                                <p> {{ 'general.cart.cart_price_title' | t }} </p>
+                            </li>
+                            <li>
+                                <p> {{ 'general.cart.cart_quantity_title' | t }} </p>
+                            </li>
+                            <li></li>
+                        </ul>
+                    </div>
+                    <div>
+                        {% for item in cart.items %}
+                            <div>
+                                <ul class="as-cart-line-item-box" data-item-key="{{ item.key }}">
+                                    <li class="as-cart-image-title">
+                                        <div>
+                                            <img src="{{ item.image | img_url: '' }}" class="as-cart-images" alt="{{ item.title }}">
+                                        </div>
+                                        <div>
+                                            <h3 class="as-cart-product-title"> {{ item.title }} </h3>
+                                            {%- if item.product.has_only_default_variant == false -%}
+                                                {%- for option in item.product.options -%}
+                                                    <div class="as-cart-variant">
+                                                        <dt> {{ option }} : </dt>
+                                                        <dd> {{ item.variant.options[forloop.index0] }} </dd>
+                                                    </div>
+                                                {%- endfor -%}
+                                            {%- endif -%}                                                                      
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <h3> 
+                                            <span> {{ 'general.price.price_icon' | t }}</span>
+                                            <span> {{ item.final_price | money_without_currency }} </span>
+                                        </h3>
+                                    </li>
+                                    <li>
+                                        {% render 'as-quantity-selector' %}
+                                    </li>
+                                    <li>
+                                        <button class="cartProductDeleteBtn as-cart-product-delete-btn" title="Remove Product"> {% render 'as-delete-icon' %} </button>
+                                    </li>
+                                </ul>                    
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="as-checkout-detail-box">
+                    <h2 class="order-summary-title"> {{ 'general.cart.checkout_detail_title' | t }} </h2>
+                    <ul class="order-summary-detail-box">
+                        <li>
+                            <dt> {{ 'general.cart.cart_subtotal' | t }} </dt>
+                            <dd> {{ 'general.price.price_icon' | t }} {{ cart.items_subtotal_price | money_without_currency }} </dd>
+                        </li>
+                        <li>
+                            <dt> {{ 'general.cart.cart_shipping_free' | t }} </dt>
+                            <dd id="shippingAmount"></dd>
+                        </li>
+                        <li>
+                            <dt> {{ 'general.cart.cart_total' | t }} </dt>
+                            <dd class="cart-total-price"> {{ 'general.price.price_icon' | t }} {{ cart.total_price | money_without_currency }} </dd>
+                        </li>
+                        <li>
+                            <div class="coupon-code-box">
+                                <input type="text" placeholder="Enter Coupon Code" class="coupon-code-input">
+                                <button class="coupon-code-btn" title="Apply Coupon Code"> {{ 'general.cart.coupon_code_btn' | t }} </button>
+                            </div>
+                        </li>
+                        <li class="as-cart-checkout-box">
+                            <button type="submit" name="checkout" class="as-cart-checkout" title="Proceed To Checkout"> {{ 'general.cart.checkout_button' | t }} </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function updateShippingCharge() {
+            fetch('/cart.js')
+                .then(response => response.json())
+                .then(cart => {
+                    let shippingCharge = calculateShipping(cart.total_price / 100);
+                    document.getElementById("shippingAmount").innerHTML = shippingCharge;
+                })
+                .catch(error => console.error("Error fetching cart:", error));
+        }
+
+        function calculateShipping(totalPrice) {
+            if (totalPrice >= 100) {
+                return "{{ 'general.cart.free_shipping' | t }}";
+            } else {
+                return "₹{{ settings.free_shipping_amount_value }}";
+            }
+        }
+
+        updateShippingCharge();
+    });
+</script>
