@@ -1,119 +1,361 @@
 <style>
     .main-cart-box{
-        position: relative;
+        padding-top: {{ section.settings.specing-top-desk }}px;
+        padding-bottom: {{ section.settings.specing-bottom-desk }}px;
+    }
+
+    @media screen and (max-width: 800px){
+        .main-cart-box{
+            padding-top: {{ section.settings.specing-top-tab }}px;
+            padding-bottom: {{ section.settings.specing-bottom-tab }}px;
+        }
+    }
+    
+    @media screen and (max-width: 580px){
+        .main-cart-box{
+            padding-top: {{ section.settings.specing-top-mbl }}px;
+            padding-bottom: {{ section.settings.specing-bottom-mbl }}px;
+        }
     }
 </style>
 
 <section class="main-cart-box">
-    <div class="container">
-        <form action="{{ routes.cart_url }}" method="post">
-            <div class="as-title-box">
-                <h2 class="as-title"> {{ 'general.cart.title' | t }} </h2>
-            </div>
+  <div class="container">
+    <div class="as-title-box">
+      <h1 class="as-title">{{ 'general.cart.title' | t }}</h1>
+    </div>
+
+    {% if cart.item_count > 0 %}
+        <p>{{ 'general.cart.cart_has_product' | t: count: cart.item_count }}</p>
+        <form action="{{ routes.cart_url }}" method="post" novalidate class="cart-form">
             <div class="as-cart-item-main">
                 <div>
                     <div>
                         <ul class="as-cart-line-title">
                             <li>
-                                <p> {{ 'general.cart.cart_product_title' | t }} </p>
+                                <p>{{ 'general.cart.cart_product_title' | t }}</p>
                             </li>
                             <li>
-                                <p> {{ 'general.cart.cart_price_title' | t }} </p>
+                                <p>{{ 'general.cart.cart_subtotal_title' | t }}</p>
                             </li>
                             <li>
-                                <p> {{ 'general.cart.cart_quantity_title' | t }} </p>
+                                <p>{{ 'general.cart.cart_price_title' | t }}</p>
+                            </li>
+                            <li>
+                                <p>{{ 'general.cart.cart_quantity_title' | t }}</p>
                             </li>
                             <li></li>
                         </ul>
                     </div>
                     <div>
-                        {% for item in cart.items %}
-                            <div>
-                                <ul class="as-cart-line-item-box" data-item-key="{{ item.key }}">
-                                    <li class="as-cart-image-title">
-                                        <div>
-                                            <img src="{{ item.image | img_url: '' }}" class="as-cart-images" alt="{{ item.title }}">
-                                        </div>
-                                        <div>
-                                            <h3 class="as-cart-product-title"> {{ item.title }} </h3>
-                                            {%- if item.product.has_only_default_variant == false -%}
-                                                {%- for option in item.product.options -%}
+                        <div>
+                            {% for item in cart.items %}
+                                <ul class="as-cart-item as-cart-line-item-box" data-item-id="{{ item.key }}" data-item-quantity="{{ item.quantity }}">
+                                    <li>
+                                        <a href="{{ item.product.url }}" class="as-cart-image-title">
+                                            <div>
+                                                <img src="{{ item.image | img_url: '' }}" class="as-cart-images" alt="{{ item.title }}">
+                                            </div>
+                                            <div>
+                                                <h3 class="as-cart-product-title">{{ item.title }}</h3>
+                                                {%- if item.product.has_only_default_variant == false -%}
+                                                    {%- for option in item.product.options -%}
                                                     <div class="as-cart-variant">
-                                                        <dt> {{ option }} : </dt>
-                                                        <dd> {{ item.variant.options[forloop.index0] }} </dd>
+                                                        <dt>{{ option }} :</dt>
+                                                        <dd>{{ item.variant.options[forloop.index0] }}</dd>
                                                     </div>
-                                                {%- endfor -%}
-                                            {%- endif -%}                                                                      
+                                                    {%- endfor -%}
+                                                {%- endif -%}
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <p>{{ 'general.price.price_icon' | t }} {{ item.price | money_without_currency }}</p>
+                                    </li>
+                                    <li>
+                                        <p>{{ 'general.price.price_icon' | t }} {{ item.line_price | money_without_currency }}</p>
+                                    </li>
+                                    <li>
+                                        <div class="quantity-adjuster as-qty-box">
+                                            <button type="button" class="qty-btn btn1 minus"> {% render 'as-quantity-minus' %} </button>
+                                            <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" class="as-quantity-input btn1 quantity-input" readonly>
+                                            <button type="button" class="qty-btn btn1 plus"> {% render 'as-quantity-plus' %} </button>
                                         </div>
                                     </li>
                                     <li>
-                                        <h3> 
-                                            <span> {{ 'general.price.price_icon' | t }}</span>
-                                            <span> {{ item.final_price | money_without_currency }} </span>
-                                        </h3>
+                                        <button type="button" class="remove-item as-cart-product-delete-btn" title="Remove Product">{% render 'as-delete-icon' %}</button>
                                     </li>
-                                    <li>
-                                        {% render 'as-quantity-selector' %}
-                                    </li>
-                                    <li>
-                                        <button class="cartProductDeleteBtn as-cart-product-delete-btn" title="Remove Product"> {% render 'as-delete-icon' %} </button>
-                                    </li>
-                                </ul>                    
+                                </ul>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <div class="cart-note">
+                                <label for="cart-note">{{ 'general.cart.cart_note' | t }}</label>
+                                <textarea name="note" id="cart-note" placeholder="{{ 'general.cart.cart_note_placeholder' | t }}">{{ cart.note }}</textarea>
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
                 </div>
                 <div class="as-checkout-detail-box">
-                    <h2 class="order-summary-title"> {{ 'general.cart.checkout_detail_title' | t }} </h2>
+                    <h2 class="as-title order-summary-title-border"> {{ 'general.cart.checkout_detail_title' | t }} </h2>
                     <ul class="order-summary-detail-box">
                         <li>
                             <dt> {{ 'general.cart.cart_subtotal' | t }} </dt>
                             <dd> {{ 'general.price.price_icon' | t }} {{ cart.items_subtotal_price | money_without_currency }} </dd>
                         </li>
                         <li>
-                            <dt> {{ 'general.cart.cart_shipping_free' | t }} </dt>
+                            <dt>{{ 'general.cart.cart_shipping_free' | t }}</dt>
                             <dd id="shippingAmount"></dd>
                         </li>
                         <li>
-                            <dt> {{ 'general.cart.cart_total' | t }} </dt>
-                            <dd class="cart-total-price"> {{ 'general.price.price_icon' | t }} {{ cart.total_price | money_without_currency }} </dd>
+                            <dt>{{ 'general.cart.cart_total' | t }}</dt>
+                            <dd class="cart-total-price"> {{ 'general.price.price_icon' | t }} {{ cart.total_price | money_without_currency }}</dd>
                         </li>
                         <li>
                             <div class="coupon-code-box">
-                                <input type="text" placeholder="Enter Coupon Code" class="coupon-code-input">
-                                <button class="coupon-code-btn" title="Apply Coupon Code"> {{ 'general.cart.coupon_code_btn' | t }} </button>
+                                <input type="text" placeholder="Enter Coupon Code" class="coupon-code-input" id="discount-code">
+                                <button class="coupon-code-btn" id="apply-discount" title="Apply Coupon Code"> {{ 'general.cart.coupon_code_btn' | t }} </button>
                             </div>
                         </li>
-                        <li class="as-cart-checkout-box">
-                            <button type="submit" name="checkout" class="as-cart-checkout" title="Proceed To Checkout"> {{ 'general.cart.checkout_button' | t }} </button>
+                        <li class="border-top-white">
+                            <div>
+                                <input type="checkbox" name="term_condition" class="as_cart_termsCondition" id="asCartTermsCondition">
+                                <label for="term_condition"> {{ 'general.cart.cart_term_condition_title' | t }} <a href="{{ settings.link_page }}" class="as-text-link"> {{ 'general.cart.cart_term_condition_link' | t }} </a> </label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="as-cart-btn-box">
+                                <button type="submit" name="checkout" class="as-cart-btn cart-checkout cartDisabled" id="cartCheckoutBtn" title="Proceed To Checkout" disabled> {{ 'general.cart.checkout_button' | t }} </button>
+                                <a href="{{ routes.all_products_collection_url }}" class="as-cart-btn cart-continue-shopping" title="Continue Shopping"> {{ 'general.cart.continue_shopping_button' | t }} </a>
+                            </div>
                         </li>
                     </ul>
                 </div>
             </div>
         </form>
-    </div>
+    {% else %}
+        <div class="empty-cart-box">
+            <div class="as-cart-empty-msg">
+                <p> {{ 'general.cart.cart_empty_massage-first' | t }} </p>
+                {% render 'as-cart-icon' %}
+                <p> {{ 'general.cart.cart_empty_massage-last' | t }} </p>
+            </div>            
+            <a href="{{ routes.all_products_collection_url }}" class="continue-shopping-btn" title="Continue Shopping"> {{ 'general.cart.continue_shopping_button' | t }} </a>
+        </div>
+    {% endif %}
+  </div>
 </section>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        const cartForm = document.querySelector('.cart-form');
+        const removeButtons = document.querySelectorAll('.remove-item');
+        const quantityInputs = document.querySelectorAll('.quantity-input');
+        const updateCartButton = document.querySelector('.update-cart');
+        const applyDiscountButton = document.getElementById('apply-discount');
+        const quantityAdjusters = document.querySelectorAll('.quantity-adjuster');
+        const shippingAmount = document.getElementById('shippingAmount');
+        const cartTotalPrice = document.querySelector('.cart-total-price');
+        const checkbox = document.getElementById("asCartTermsCondition");
+        const checkoutButton = document.getElementById("cartCheckoutBtn");
+
+        checkbox.addEventListener("change", function () {
+            if (this.checked) {
+                checkoutButton.removeAttribute("disabled");
+                checkoutButton.classList.remove('cartDisabled');
+            } else {
+                checkoutButton.setAttribute("disabled", "disabled");
+                checkoutButton.classList.add('cartDisabled');
+            }
+        });
+
+        function updateCart(data) {
+            fetch('/cart/update.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((cart) => {
+                    location.reload();
+                })
+                .catch((error) => console.error('Error:', error));
+        }
+
         function updateShippingCharge() {
             fetch('/cart.js')
-                .then(response => response.json())
-                .then(cart => {
+                .then((response) => response.json())
+                .then((cart) => {
                     let shippingCharge = calculateShipping(cart.total_price / 100);
-                    document.getElementById("shippingAmount").innerHTML = shippingCharge;
+                    document.getElementById('shippingAmount').innerHTML = shippingCharge;
+
+                    if (shippingCharge === '{{ 'general.price.price_icon' | t }}{{ settings.free_shipping_amount_value }}') {
+                        let newTotalPrice = cart.total_price + 5000;
+                        cartTotalPrice.innerHTML = '{{ 'general.price.price_icon' | t }} ' + (newTotalPrice / 100).toFixed(2);
+                    } else {
+                        cartTotalPrice.innerHTML = '{{ 'general.price.price_icon' | t }} ' + (cart.total_price / 100).toFixed(2);
+                    }
                 })
-                .catch(error => console.error("Error fetching cart:", error));
+                .catch((error) => console.error('Error fetching cart:', error));
         }
 
         function calculateShipping(totalPrice) {
-            if (totalPrice >= 100) {
+            if (totalPrice >= 600) {
                 return "{{ 'general.cart.free_shipping' | t }}";
             } else {
-                return "₹{{ settings.free_shipping_amount_value }}";
+                return '{{ 'general.price.price_icon' | t }}{{ settings.free_shipping_amount_value }}';
             }
         }
 
         updateShippingCharge();
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        const debouncedUpdateCart = debounce(updateCart, 300);
+
+        removeButtons.forEach((button) => {
+            button.addEventListener('click', function () {
+                const itemId = this.closest('.as-cart-item').dataset.itemId;
+                updateCart({ updates: { [itemId]: 0 } });
+            });
+        });
+
+        quantityAdjusters.forEach((adjuster) => {
+            const minusButton = adjuster.querySelector('.minus');
+            const plusButton = adjuster.querySelector('.plus');
+            const input = adjuster.querySelector('.quantity-input');
+            const itemId = adjuster.closest('.as-cart-item').dataset.itemId;
+
+            minusButton.addEventListener('click', () => {
+                if (parseInt(input.value) > 0) {
+                    input.value = parseInt(input.value) - 1;
+                    debouncedUpdateCart({ updates: { [itemId]: parseInt(input.value) } });
+                }
+            });
+
+            plusButton.addEventListener('click', () => {
+                input.value = parseInt(input.value) + 1;
+                debouncedUpdateCart({ updates: { [itemId]: parseInt(input.value) } });
+            });
+        });
+
+        updateCartButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            const formData = new FormData(cartForm);
+            const updates = {};
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith('updates[')) {
+                    const itemId = key.match(/\[(.*?)\]/)[1];
+                    updates[itemId] = parseInt(value);
+                }
+            }
+            updateCart({ updates });
+        });
+
+        applyDiscountButton.addEventListener('click', function () {
+            const discountCode = document.getElementById('discount-code').value;
+            fetch('/discount/' + discountCode, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(() => location.reload())
+                .catch((error) => console.error('Error:', error));
+        });
+
+        cartForm.addEventListener('submit', function (e) {
+            if (e.submitter.name === 'checkout') {
+                return;
+            }
+            e.preventDefault();
+        });
     });
 </script>
+
+{% schema %}
+{
+    "settings": [
+        {
+            "type": "header",
+            "content": "Specing Top"
+        },
+        {
+            "type": "range",
+            "id": "specing-top-desk",
+            "label": "Desktop",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "specing-top-tab",
+            "label": "Tablet",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "specing-top-mbl",
+            "label": "Mobile",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "header",
+            "content": "Specing Bottom"
+        },
+        {
+            "type": "range",
+            "id": "specing-bottom-desk",
+            "label": "Desktop",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "specing-bottom-tab",
+            "label": "Tablet",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "specing-bottom-mbl",
+            "label": "Mobile",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        }
+    ]
+}
+{% endschema %}

@@ -1425,6 +1425,11 @@
         "id": "free_shipping_amount_value",
         "label": "Shiiping Charges",
         "default": "50"
+      },
+      {
+        "type": "url",
+        "id": "link_page",
+        "label": "Link Page",
       }
     ]
   },

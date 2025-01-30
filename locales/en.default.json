@@ -40,18 +40,26 @@
       "reset": "Clear search term"
     },
     "cart": {
-      "title": "Cart",
+      "title": "Your Cart",
+      "cart_empty_massage-first": "Your",
+      "cart_empty_massage-last": "Is Empty",
+      "cart_has_product": "Your Cart Has {{ count }} Products",
       "cart_product_title": "Product",
-      "cart_price_title": "Price",
+      "cart_subtotal_title": "Sub Total",
+      "cart_price_title": "Total",
       "cart_quantity_title": "Quantity",
-      "cart_empty_massage": "Your Cart Is Empty",
-      "checkout_button": "Checkout",
+      "cart_note": "Additional Comments",
+      "cart_note_placeholder": "Special instruction for seller...",
       "checkout_detail_title": "Order Summary",
       "cart_subtotal": "Subtotal",
-      "cart_shipping_free": "Shipping Free",
-      "cart_total": "Total",
       "free_shipping": "Free",
-      "coupon_code_btn": "Apply"
+      "cart_shipping_free": "Shipping Charges",
+      "cart_total": "Total",
+      "coupon_code_btn": "Apply",
+      "cart_term_condition_title": "I agree with the",
+      "cart_term_condition_link": "Terms & Conditions",
+      "checkout_button": "Checkout",
+      "continue_shopping_button": "Continue Shopping"
     },
     "price": {
       "price_icon": "₹"
