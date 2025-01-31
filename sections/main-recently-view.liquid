@@ -1,0 +1,185 @@
+<style>
+    .main-recent-view{
+        padding-top: {{ section.settings.pedding-top-desk }}px;
+        padding-bottom: {{ section.settings.pedding-bottom-desk }}px;
+    }
+
+    @media screen and (max-width: 800px){
+        .main-recent-view{
+            padding-top: {{ section.settings.pedding-top-tab }}px;
+            padding-bottom: {{ section.settings.pedding-bottom-tab }}px;
+        }
+    }
+    
+    @media screen and (max-width: 580px){
+        .main-recent-view{
+            padding-top: {{ section.settings.pedding-top-mbl }}px;
+            padding-bottom: {{ section.settings.pedding-bottom-mbl }}px;
+        }
+    }
+</style>
+
+<section class="main-recent-view">
+    <div class="container">
+        <div>
+            <h2 class="as-section-heading"> {{ section.settings.section_heading }} </h2>
+        </div>
+        <div id="recently-viewed-products" class="as-product-grid"></div>
+    </div>
+</section>
+
+<script>
+    const mainRecentView = document.querySelector('.main-recent-view');
+    let maxProducts = '{{ section.settings.product_per_row_count }}';
+    let productHandle = "{{ product.handle }}";
+    let viewedProducts = JSON.parse(localStorage.getItem("recentlyViewed")) || [];
+    viewedProducts = viewedProducts.filter(p => p !== productHandle);
+    viewedProducts.unshift(productHandle);
+
+    if (viewedProducts.length > maxProducts) {
+        viewedProducts.pop();
+    }
+    localStorage.setItem("recentlyViewed", JSON.stringify(viewedProducts));
+    fetchRecentlyViewedProducts(viewedProducts);
+
+    function fetchRecentlyViewedProducts(viewedProducts) {
+        let recentlyViewedContainer = document.getElementById("recently-viewed-products");
+        recentlyViewedContainer.innerHTML = "";
+
+        if (viewedProducts.length === 0) {
+            mainRecentView.style.display = 'none';
+            return;
+        }
+
+        viewedProducts.forEach(handle => {
+            fetch(`/products/${handle}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    let product = data.product;
+                    let productURL = `/products/${product.handle}`;
+                    let productHTML = `
+                        <div class="recent-product text-center">
+                            <a href="${productURL}">
+                                <div>
+                                    <img src="${product.images[0].src}" class="as-product-image" alt="${product.title}">
+                                </div>
+                                <div>
+                                    <h3 class="as-product-title truncate-single">${product.title}</h3>
+                                    <p class="as-product-price"> {{ 'general.price.price_icon' | t }} ${product.variants[0].price}</p>
+                                </div>
+                            </a>
+                        </div>
+                    `;
+                    recentlyViewedContainer.innerHTML += productHTML;
+                });
+        });
+    }
+</script>
+
+{% schema %}
+{
+    "name": "as recently viewed",
+    "settings": [
+        {
+            "type": "header",
+            "content": "General Settings"
+        },
+        {
+            "type": "header",
+            "content": "Scpeing Top"
+        },
+        {
+            "type": "range",
+            "id": "pedding-top-desk",
+            "label": "Desktop",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "pedding-top-tab",
+            "label": "Tablet",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "pedding-top-mbl",
+            "label": "Mobile",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "header",
+            "content": "Scpeing Bottom"
+        },
+        {
+            "type": "range",
+            "id": "pedding-bottom-desk",
+            "label": "Desktop",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "pedding-bottom-tab",
+            "label": "Tablet",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "range",
+            "id": "pedding-bottom-mbl",
+            "label": "Mobile",
+            "min": 0,
+            "max": 100,
+            "default": 50,
+            "step": 5,
+            "unit": "px"
+        },
+        {
+            "type": "header",
+            "content": "Section Heading"
+        },
+        {
+            "type": "text",
+            "id": "section_heading",
+            "label": "Title",
+            "default": "Recently Viewed Products"
+        },
+        {
+            "type": "header",
+            "content": "Product Detail"
+        },
+        {
+            "type": "range",
+            "id": "product_per_row_count",
+            "label": "Product Per Row",
+            "min": 1,
+            "max": 12,
+            "default": 4,
+            "step": 1
+        }
+    ],
+    "presets": [
+        {
+            "name": "As Recently Viewed"
+        }
+    ]
+}
+{% endschema %}

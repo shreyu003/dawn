@@ -52,9 +52,6 @@ a{
     gap: 20px;
     align-items: center;
 }
-.as-cart-images{
-    width: 100%;
-}
 .as-delete-icon{
     width: 24px;
     height: 24px;
@@ -62,14 +59,6 @@ a{
 .as-cart-variant{
     display: flex;
     gap: 5px;
-}
-.as-cart-product-title{
-    font-size: 18px;
-    text-align: left;
-    text-transform: capitalize;
-    width: fit-content;
-    line-height: 1.5;
-    margin-bottom: 10px;
 }
 .as-cart-product-delete-btn{
     background-color: #0000;
@@ -118,10 +107,10 @@ a{
     line-height: 1.5;
     cursor: pointer;
 }
-button:focus, input:focus{
-    outline: none;
+button:focus, input:focus, textarea:focus{
+    outline: none !important;
 }
-.coupon-code-input::placeholder{
+::placeholder{
     color: #fff;
 }
 .border-top-white{
@@ -201,7 +190,6 @@ button:focus, input:focus{
     vertical-align: text-top;
     height: 20px;
     width: 20px !important;
-    -webkit-appearance: none;
     opacity: .5;
 }
 .as_cart_termsCondition::before {
@@ -261,4 +249,91 @@ button:focus, input:focus{
 .continue-shopping-btn:hover{
     color: #000;
     background-color: #fff;
+}
+.cart-note textarea{
+    color: #fff;
+    border: 2px solid #ffffff6e;
+    background-color: #000;
+    width: 45%;
+    padding: 20px;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+.cart-note{
+    display: flex;
+    flex-direction: column;
+    padding-top: 30px;
+}
+.as-section-heading{
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 2;
+    margin-bottom: 30px;
+    text-transform: capitalize;
+    text-align-last: left;
+}
+.as-product-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+}
+.text-center {
+    text-align: center;
+}
+.as-product-image{
+    width: 100%;
+}
+.as-product-title{
+    font-size: 18px;
+    line-height: 2;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.as-product-price{
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
+@media screen and (max-width: 1440px){
+
+}
+
+@media screen and (max-width: 1370px){
+
+}
+
+@media screen and (max-width: 1280px){
+    .truncate-single {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 800px){
+    .as-product-grid{
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px 20px;
+    }
+    .as-product-title {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+}
+
+@media screen and (max-width: 580px){
+
+}
+
+@media screen and (max-width: 380px){
+    
+}
+
+@media screen and (max-width: 320px){
+
 }
